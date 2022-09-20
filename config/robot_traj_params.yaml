@@ -3,7 +3,7 @@ home:   [-2.3016560713397425, -0.9771693388568323, 1.299661636352539, -1.8671391
 
 base_link: base_link
 tool_link: tip
-replan: false
+replan: true
 
 rate: 125
 

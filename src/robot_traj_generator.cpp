@@ -166,7 +166,7 @@ int main(int argc, char **argv)
     tf::poseEigenToTF (T_bt, tf);
     tf::poseEigenToTF (T_bt, tf_);
 //     rtp.setTf(tf);
-/*
+
     ros::Duration(0.5).sleep();
     ROS_INFO_STREAM_THROTTLE(5.0,"looping");
     
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
     {
       ROS_ERROR("some error in trajectory execution. Return!");
       return -1;
-    }*/
+    }
     ROS_INFO_STREAM(GREEN << "Trajectory executed correctly ! ");
     
   }
