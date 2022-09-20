@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robot_traj_generator</name>
+  <version>0.0.0</version>
+  <description>The robot_traj_generator package</description>
+  <maintainer email="lagrangia@todo.todo">lagrangia</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <depend>roscpp</depend>
+  <depend>rosdyn_core</depend>
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>tf_conversions</depend>
+  <depend>moveit_planning_helper</depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
