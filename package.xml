@@ -15,6 +15,7 @@
   <depend>moveit_ros_planning_interface</depend>
   <depend>tf_conversions</depend>
   <depend>moveit_planning_helper</depend>
+  <depend>gt_coop_mpc</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

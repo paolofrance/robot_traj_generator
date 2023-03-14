@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <rosparam command="load" file="$(find robot_traj_generator)/config/robot_traj_params.yaml" />
+<!--   <rosparam command="load" file="$(find robot_traj_generator)/config/traj/trajectories_planned.yaml" /> -->
+  <rosparam command="load" file="$(find robot_traj_generator)/config/traj/trajectories_planned_free.yaml" />
+  <node name="robot_traj_generator" pkg="robot_traj_generator" type="mpc_cart_traj_pub" output="screen"/>
+</launch>
+

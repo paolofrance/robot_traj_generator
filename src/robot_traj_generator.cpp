@@ -37,6 +37,7 @@
 
 
 tf::Pose tf_;
+tf::Pose tf_viapoint_;
 
 double distance_ = 10;
 
@@ -46,6 +47,8 @@ void bc()
   while (ros::ok())
   {
     br.sendTransform(tf::StampedTransform(tf_, ros::Time::now(), "base_link", "target_pose"));
+    ros::Duration(0.01).sleep();
+    br.sendTransform(tf::StampedTransform(tf_viapoint_, ros::Time::now(), "base_link", "viapoint"));
     ros::Duration(0.01).sleep();
   }
 }
@@ -63,7 +66,7 @@ int main(int argc, char **argv)
   spinner.start();
   ROS_INFO_STREAM("[mqtt converter] -> looking for params under NS: "<< nh.getNamespace());
   
-  std::vector<double> target_vec,home_vec;
+  std::vector<double> target_vec,home_vec,vp_vec;
   if(!nh.getParam("target",target_vec))
   {
     ROS_ERROR_STREAM("target not found on namespace: "<<nh.getNamespace());
@@ -72,6 +75,11 @@ int main(int argc, char **argv)
   if(!nh.getParam("home",home_vec))
   {
     ROS_ERROR_STREAM("home not found on namespace: "<<nh.getNamespace());
+    return -1;
+  }
+  if(!nh.getParam("viapoint",vp_vec))
+  {
+    ROS_ERROR_STREAM("viapoint not found on namespace: "<<nh.getNamespace());
     return -1;
   }
   int rate;
@@ -124,6 +132,11 @@ int main(int argc, char **argv)
     tf::poseEigenToTF (T_bt, tf_);
 //     rtp.setTf(tf);
   }
+  {
+    Eigen::VectorXd vec = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(vp_vec.data(), vp_vec.size());
+    Eigen::Affine3d T_bt = chain_bt->getTransformation(vec);
+    tf::poseEigenToTF (T_bt, tf_viapoint_);
+  }
   
   
   std::vector<std::string> trj_names;
@@ -157,7 +170,10 @@ int main(int argc, char **argv)
     }
     
     ROS_INFO_STREAM(CYAN<<"Press enter to start motion");
-    std::cin.get(); 
+//     if(i==0)
+      std::cin.get(); 
+    
+    ros::Duration(1.0).sleep();
     
     Eigen::VectorXd vec = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(poses_vec.at(i).data(), poses_vec.at(i).size());
     Eigen::Affine3d T_bt = chain_bt->getTransformation(vec);
