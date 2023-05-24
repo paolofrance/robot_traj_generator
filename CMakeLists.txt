@@ -5,7 +5,9 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
+  std_srvs
   roscpp
+  rospy
   rosdyn_core
   moveit_core
   moveit_ros_planning_interface

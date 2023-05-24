@@ -4,5 +4,6 @@
 <!--   <rosparam command="load" file="$(find robot_traj_generator)/config/traj/trajectories_planned.yaml" /> -->
   <rosparam command="load" file="$(find robot_traj_generator)/config/traj/trajectories_planned_free.yaml" />
   <node name="robot_traj_generator" pkg="robot_traj_generator" type="robot_traj_generator" output="screen"/>
+  <node name="bag_recorder" pkg="robot_traj_generator" type="recorder_srv.py" output="screen"/>
 </launch>
 

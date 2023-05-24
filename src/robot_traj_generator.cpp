@@ -13,6 +13,8 @@
 #include <moveit_planning_helper/manage_trajectories.h>
 
 #include <std_msgs/Float32.h>
+#include <std_srvs/SetBool.h>
+
 
 // class robotTrajPlanner{
 // public:
@@ -64,7 +66,7 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
   ros::AsyncSpinner spinner(1);
   spinner.start();
-  ROS_INFO_STREAM("[mqtt converter] -> looking for params under NS: "<< nh.getNamespace());
+  ROS_INFO_STREAM("[robot_traj_generator] -> looking for params under NS: "<< nh.getNamespace());
   
   std::vector<double> target_vec,home_vec,vp_vec;
   if(!nh.getParam("target",target_vec))
@@ -81,6 +83,12 @@ int main(int argc, char **argv)
   {
     ROS_ERROR_STREAM("viapoint not found on namespace: "<<nh.getNamespace());
     return -1;
+  }
+  bool record_bag;
+  if(!nh.getParam("record_bag",record_bag))
+  {
+    ROS_WARN_STREAM("record not found on namespace: "<<nh.getNamespace()<<" default false");
+    record_bag=false;
   }
   int rate;
   GET_AND_DEFAULT(nh,"rate",rate,10);
@@ -108,6 +116,15 @@ int main(int argc, char **argv)
   execute_trajectory.waitForServer();
   ROS_INFO_STREAM(action_name<<" connected ! ");
   
+  bool record_bag_toggle;
+  std::string srv_name = "/record_bag";
+  ros::ServiceClient client = nh.serviceClient<std_srvs::SetBool>(srv_name);
+  if (record_bag)
+  {
+    ROS_INFO_STREAM("waiting for "<< srv_name);
+    client.waitForExistence();
+    record_bag_toggle = true;
+  }
   
   static const std::string PLANNING_GROUP = "manipulator";
   moveit::planning_interface::MoveGroupInterface move_group(PLANNING_GROUP);
@@ -168,6 +185,17 @@ int main(int argc, char **argv)
       if(! trajectory_processing::getTrajectoryFromParam(path,my_plan.trajectory_.joint_trajectory,what) )
         ROS_ERROR_STREAM("trajectory " << path << " not set on ros param. what : " << what);        
     }
+    
+   if (record_bag && record_bag_toggle)
+   {
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+    client.call(srv);
+    ROS_INFO_STREAM("recording this trajectory ");
+   }
+   else
+     ROS_INFO_STREAM("NOT recording this trajectory ");
+    
     
     ROS_INFO_STREAM(CYAN<<"Press enter to start motion");
 //     if(i==0)
@@ -262,6 +290,15 @@ int main(int argc, char **argv)
       return -1;
     }
     ROS_INFO_STREAM(GREEN << "Trajectory executed correctly ! ");
+    
+    if (record_bag && record_bag_toggle)
+    {
+      std_srvs::SetBool srv;
+      srv.request.data = false;
+      client.call(srv);
+      ROS_INFO_STREAM("STOP recording this trajectory ");
+    }
+    record_bag_toggle = !record_bag_toggle;
     
   }
   
